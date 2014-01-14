@@ -1,0 +1,44 @@
+Galvant Industries GPIBUSB Command List
+
+** Baudrate: 460800 **
+** Note: All writes to the controller must end with a carriage return ('\r' or dec:13) **
+** All responses from the adapter will have a CR added. **
+
+All of this information can be found, along with additional information, can be found in the readme.md file for the firmware located at github.com/Galvant/gpibusb-firmware
+
++a:1
+Set the GPIB address of the device you wish to communicate with. Here the target address is 1. Check the device to find what its address is.
+
++eoi:1
+Used to toggle EOI detection on (1) and off (0). If set to on, the controller will stop reading bytes from the device when EOI is asserted. When set to off, the controller will stop when it reads the byte defined by the +eos: command. Default is on (1). Most devices will use EOI, some will give you the option, and some will not. For those that give you the option, it is highly recommended that you use EOI to signal end of data.
+
++eos:1
+Set the character that the device uses to signal end of data. This is especially important when EOI
+is off. However, some instruments will use both a termination character and use EOI. If you make sure to set EOS even if you are using EOI data termination, the controller will suppress the last byte. It is recommended that you disable any termination characters at the instrument and just use EOI.
+To set the termination character, put the decimal form of the character after the colon. For example, to
+set the character to 'z', you would write +eos:122
+
++read
+Force the controller to read data from the instrument by placing the instrument in talk mode. Normally this is NOT required. When writing commands that end with a question mark (?), the controller will automatically read the response. However, older instruments do not include question marks at the end of query commands. In these cases, using this command will prompt the controller to read the response data.
+
++test
+Used to test the controller and your communication software. Controller will respond with: testing\n\r
+Controller needs to be plugged into an instrument that is on (ie red LED off) for this to work.
+
++get
+Short for “Group Execute Trigger”. This command will send the GPIB bus command to all attached instruments. Introduced in firmware version 3.
+
++strip:0
+Sets the number of characters to remove from the end of the instrument's response before sending it to the attached computer. This is useful when the instrument appends a CR as the adapter uses CR to terminate communication. This can prevent having to include extra serial port reads in an effort to clear the buffer when programming. NOTE: This command can fail if the total number of bytes to be sent to the computer is close to an integer multiple of 100. Introduced in firmware version 3.
+
++ver
+Returns the firmware version. Introduced in firmware version 3.
+
++autoread:1
+Used to toggle automatic response reading on (1) and off (0). If set to on (default) the adapter will automatically start reading the response from the device if your data contained a question mark (?). When set to off, the response will not be read and you will need to send the +read command to do so. This is useful for when uploading small amount of binary data to your instruments as 0x3F (ascii for "?") will cause the adapter to attempt to read a response. Introduced in firmware version 4.
+
++reset
+Resets the microcontroller. Can be useful for when you need settings back to power-on default, or if and instrument/device has decided it no longer wishes to listen to the GPIB bus. Introduced in firmware version 4.
+
++debug:0
+Used to toggle simple debug messages on (1) and off (0). When set to on, communicaiton timeout error messages are sent to the host PC containing basic details as to when and what timed-out. This includes which data line timed-out (DAV, NDAC, NRFD), if you were waiting for it to go high or low, as well as if the adapter was reading or writing. Default is off (0). Introduced in firmware version 4.

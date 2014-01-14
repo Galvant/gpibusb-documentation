@@ -1,0 +1,51 @@
+Galvant Industries GPIBUSB rev3
+
+
+Thanks for purchasing our USB-to-GPIB adapter! This hardware is released as open source hardware. This means you can find all the source files online at github.com/Galvant where you are free to download them to share, use, change, or anything else you like!
+
+By purchasing this adapter, you are supporting open source hardware and the development of future OSHW products. And with that, we thank you.
+
+ The specific licence that all the source is released under is the Creative Commons 3.0 Attribution ShareAlike licence. More details can be found accompanying the source files on Github.
+
+
+Warning!
+This device contains lead-free (Pb) in all solder joints but was not assembled in a lead-free environment. Be sure to wash your hands after handling so you do not ingest any residue on your hands.
+This adapter has only been tested at room temperatures, at standard humidity levels. As such, there is no guaranteed operation outside of these conditions.
+This product contains ESD sensitive devices. Refrain from touching any of the surface mount components soldered to the board, unless you are taking proper ESD safety precautions.
+
+
+Additional Resources
+
+You can find lots of instrument communication Python code at github.com/Galvant/InstrumentKit where a consistent API is provided across several specific and generic instruments. This library is not specific to this GPIBUSB adapter and works with a variety of connections including serial, tcpip, through VISA, unix filelikes (eg /dev/usbtmc0), and of course, this adapter.
+
+Some additional documentation, including the full set of internal adapter commands, can be found at github.com/Galvant/gpibusb-documentation.
+
+
+
+Contact Information
+
+If you have any questions, comments, or concerns please send an email to contact@galvant.ca 
+
+Visit our website at galvant.ca, follow us on twitter @Galvant_Ind, and watch Steven's YouTube channel for development of new products! youtube.com/user/stevencasagrande
+
+If you find any bugs, develop any firmware changes, or have any suggestions, be sure to send us an email! We'll see about including your suggestions in the github repositories for everyone else to use!
+Quickstart – Windows
+1. Plug adapter into free USB port. Windows 7 should automatically download the required drivers. If your version of Windows does not automatically download the drivers, visit ftdichip.com/FTDrivers.htm and download and install the “Virtual COM Port” driver.
+2. Find which COM port your adapter is. You can find this information in the Windows device manager (right click Computer -> Properties -> Device Manager). Look for the entry with FTDI in the name.
+3. Download a serial terminal client such as Termite (compuphase.com/software_termite.htm)
+4. Follow communication steps below.
+
+Quickstart – Linux
+1. Make sure you are running a version 3.0.0-19 or greater Linux kernel. To check this type uname -a into the terminal. Most modern Linux distributions will already be using this. It is highly recommended that you upgrade to the latest distribution version (and thus kernel) to ensure operation.
+2. Add your user to the dialout usergroup. Type usermod -a -G dialout name where you replace name with your username. Restart computer to make sure this takes effect. This ensures that your account can read and write to serial ports.
+3. Plug adapter into a free USB port, and find what the port name is. Most of the time it will be /dev/ttyUSB0. To find this, type ls /dev | grep ttyUSB into the terminal.
+4. Use a serial terminal program to connect to the adapter. Some examples include Putty and Minicom.
+5. Follow communication steps below.
+
+Communication
+1. Set your program to 460800 baud and termination to CR. If you are not able to set the termination character, be sure to add a CR (carriage return, \r) to all communications. This baud rate is not an option in the Terminite dropdown list and you must manually type it in the field.
+2. Connect GPIBUSB to instrument(s). Ensure that the red LED is off. This ensures that the adapter has correctly taken control of the attached instrument(s).
+3. Use the command +test (with a CR at the end) to check that everything is working. If the adapter responds with testing\n\r then everything has been setup, and you are connected to the instrument(s).
+4. Set your target instrument by sending +a:1 where 1 is replaced with the GPIB address of your target instrument. If automating communication in a script, it is recommended that you include a slight delay (0.02sec) between successive commands.
+5. Send your command of interest. A good test on most instruments is *idn? . If your query ends in a question mark, the adapter will automatically get the instrument response and write it to the computer.
+6. For older instruments, your query might not end with a question mark. In this case send the command +read to force the adapter to read the instrument response by putting the instrument into talk mode.
